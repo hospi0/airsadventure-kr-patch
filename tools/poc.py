@@ -428,6 +428,8 @@ def main():
         n = len(jp); new = [name_code[c] for c in kr]; pad = (n - len(new)) // 2
         seq = [0x24] * pad + new + [0x24] * (n - len(new) - pad)
         b[off:off + n] = bytes(seq)
+    for off in (0x3A388, 0x3A516):                                                # 능력 화면 攻·防 = 코드 안 글꼴 번호 2개
+        assert b[off:off + 4] == bytes.fromhex('04850B34'); b[off:off + 4] = struct.pack('>HH', main_slots['공'], main_slots['방'])
     open(os.path.join(OUT, '0.BIN'), 'wb').write(b)
     BT.apply(main_slots, name_code, OUT)
     print('NBG1 버려진 화소: 투명 칸', NBG1_LOST[0], '· 빈 칸', NBG1_LOST[1])

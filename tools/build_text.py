@@ -221,6 +221,8 @@ def apply(main, name_code, out):
         q = enc(k, main)
         if len(q) > 8: raise ValueError(loc)
         q = q + [0xFFFF] + [0] * max(0, (e - off) // 2 - len(q)); d[off:off + len(q) * 2] = struct.pack('>%dH' % len(q), *q)
+        nb = [0x24 if c == ' ' else name_code[c] for c in k]; assert len(nb) <= 8, k     # 전투 화면 작은 글꼴 이름 = 16비트 이름 앞 8 B(이름 코드, FF 채움)
+        d[off - 8:off] = bytes(nb + [0xFF] * (8 - len(nb)))
         os.makedirs(os.path.dirname(o), exist_ok=True); open(o, 'wb').write(d)
     print('문장 레코드', sum(len(v) for v in by.values()), '· 파일', len(by), '· 몬스터', len(mon))
 
